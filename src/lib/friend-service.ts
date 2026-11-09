@@ -18,7 +18,7 @@ const CHAT_REPLIES: Record<Tone, string[]> = {
 export async function getChatReply(tone: Tone, _text: string): Promise<string> {
   await new Promise((r) => setTimeout(r, 600));
   const list = CHAT_REPLIES[tone];
-  return list[Math.floor(Math.random() * list.length)];
+  return list[Math.floor(Math.random() * list.length)] ?? list[0] ?? "";
 }
 
 export async function interpret(req: InterpretRequest): Promise<InterpretResult> {
