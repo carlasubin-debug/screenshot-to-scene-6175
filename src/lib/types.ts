@@ -29,8 +29,8 @@ export interface InterpretRequest {
   text: string;
   imageCount: number;
   maskNames: boolean;
-  relationship?: Relationship;
-  situation?: Situation;
+  relationship?: Relationship | undefined;
+  situation?: Situation | undefined;
 }
 
 export type Confidence = "낮음" | "보통" | "높음";
