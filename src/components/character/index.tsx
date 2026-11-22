@@ -20,8 +20,7 @@ export function CharacterDisplay({
       aria-label="캐릭터 영역 (준비 중)"
       className={cn("relative flex items-center justify-center", className)}
     >
-      <div className="absolute inset-0 rounded-full bg-stage opacity-80 blur-2xl" />
-      <div className="relative h-44 w-44 rounded-full border-2 border-dashed border-border animate-float" />
+      <div className="relative h-44 w-44 rounded-full border-2 border-dashed border-border" />
     </div>
   );
 }

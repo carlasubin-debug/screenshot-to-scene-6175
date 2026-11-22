@@ -16,13 +16,15 @@ export const Route = createFileRoute("/interpret")({
       { name: "description", content: "헷갈리는 말을 관계와 상황까지 함께 살펴봐요." },
       { property: "og:title", content: "뭐라는 거야? · 대화 해석" },
       { property: "og:description", content: "헷갈리는 말을 관계와 상황까지 함께 살펴봐요." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: InterpretPage,
 });
 
 function InterpretPage() {
-  const s = useSettings()!;
+  const s = useSettings();
   const navigate = useNavigate();
   const [text, setText] = useState("");
   const [images, setImages] = useState<LocalImage[]>([]);
@@ -44,6 +46,8 @@ function InterpretPage() {
     navigate({ to: "/result" });
   };
 
+  if (!s) return null;
+
   if (loading)
     return (
       <div className="flex flex-1 flex-col">
@@ -56,20 +60,20 @@ function InterpretPage() {
   return (
     <div className="flex flex-1 flex-col">
       <Header title="뭐라는 거야?" back />
-      <div className="flex-1 space-y-5 px-5 pb-32 pt-2">
-        <Card className="bg-accent text-accent-foreground">
+      <div className="page-content flex-1 space-y-6 px-5 pb-36 pt-6">
+        <section className="border-b border-border pb-5">
           <p className="font-display text-lg">{INTERPRET_INTROS[s.tone]}</p>
           <p className="mt-2 text-sm opacity-80">
             {s.name}{topicParticle(s.name)} 번역기가 아니라, 상황까지 같이 살펴보는 친구예요.
           </p>
-        </Card>
+        </section>
 
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           rows={5}
           placeholder={`뭐라는 거야? 라고 생각한 말이 있다면 ${s.name}에게 말해봐요`}
-          className="w-full resize-none rounded-3xl border border-input bg-card p-5 text-base outline-none placeholder:text-muted-foreground focus:border-primary"
+          className="w-full resize-none rounded-lg border border-input bg-card p-5 text-base outline-none placeholder:text-muted-foreground focus:border-primary"
         />
 
         <section>
@@ -109,7 +113,7 @@ function InterpretPage() {
         </section>
       </div>
 
-      <div className="fixed bottom-0 left-1/2 w-full max-w-md -translate-x-1/2 bg-background/95 px-5 pb-6 pt-3 backdrop-blur">
+      <div className="page-actions fixed inset-x-0 border-t border-border bg-background/95 px-5 pb-4 pt-3 backdrop-blur">
         <Button size="lg" className="w-full" disabled={!text.trim() && images.length === 0} onClick={analyze}>
           분석하기
         </Button>

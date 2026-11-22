@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep the shared bottom navigation in AppShell and position page action bars above its safe-area-aware height so every screen shares one navigation boundary.
+- Use shared common controls and global semantic tokens for the app's presentation so page styling remains consistent across themes.

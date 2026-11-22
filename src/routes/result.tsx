@@ -13,6 +13,8 @@ export const Route = createFileRoute("/result")({
       { name: "description", content: "가능한 해석과 추천 답장을 확인해 보세요." },
       { property: "og:title", content: "해석 결과 · 뭐라는 거야?" },
       { property: "og:description", content: "가능한 해석과 추천 답장을 확인해 보세요." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: ResultPage,
@@ -43,16 +45,16 @@ function ResultPage() {
         />
       )}
       {r && (
-        <div className="space-y-4 px-5 pb-10 pt-2">
-          <Card className="bg-muted shadow-none">
+        <div className="page-content space-y-4 px-5 pb-10 pt-6">
+          <section className="border-b border-border pb-4">
             <p className="text-xs text-muted-foreground">입력한 원문</p>
             <p className="mt-1 whitespace-pre-wrap">"{r.original}"</p>
-          </Card>
-          <Card className="bg-accent text-accent-foreground">
+          </section>
+          <section className="border-b border-border pb-5">
             <p className="text-xs opacity-80">한 줄 요약</p>
             <p className="mt-1 font-display text-lg">{r.summary}</p>
             <p className="mt-3 text-sm">확신 수준: <b>{r.confidence}</b></p>
-          </Card>
+          </section>
 
           <h2 className="pt-2 font-display text-lg">이렇게 해석할 가능성이 있어요</h2>
           {r.interpretations.map((it, i) => (
@@ -60,14 +62,14 @@ function ResultPage() {
               <p className="text-xs font-semibold text-primary">가능한 해석 {i + 1}</p>
               <p className="mt-1 font-semibold">{it.title}</p>
               <p className="mt-1 text-sm">{it.description}</p>
-              <p className="mt-3 rounded-2xl bg-muted px-3 py-2 text-xs text-muted-foreground">근거 · {it.evidence}</p>
+              <p className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">근거 · {it.evidence}</p>
             </Card>
           ))}
 
-          <Card className="bg-secondary text-secondary-foreground shadow-none">
+          <section className="border-b border-border py-4">
             <p className="text-xs opacity-80">다른 가능성</p>
             <p className="mt-1 text-sm">{r.otherPossibility}</p>
-          </Card>
+          </section>
 
           <h2 className="pt-2 font-display text-lg">추천 답장</h2>
           {(Object.keys(REPLY_LABELS) as (keyof typeof REPLY_LABELS)[]).map((k) => (

@@ -14,6 +14,8 @@ export const Route = createFileRoute("/onboarding")({
       { name: "description", content: "이름과 말투를 정하고 나만의 AI 친구를 만나 보세요." },
       { property: "og:title", content: "친구 만들기 · 뭐라는 거야?" },
       { property: "og:description", content: "이름과 말투를 정하고 나만의 AI 친구를 만나 보세요." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Onboarding,
@@ -36,7 +38,7 @@ function Onboarding() {
   };
 
   return (
-    <div className="flex flex-1 flex-col px-6 pb-8 pt-10">
+    <div className="page-content onboarding-page flex flex-1 flex-col px-6 pb-8 pt-10">
       <div className="mb-8 flex gap-1.5">
         {STEPS.map((l, i) => (
           <div key={l} className={cn("h-1.5 flex-1 rounded-full", i <= step ? "bg-primary" : "bg-muted")} />
@@ -53,7 +55,7 @@ function Onboarding() {
               maxLength={NAME_MAX}
               onChange={(e) => setName(e.target.value.slice(0, NAME_MAX))}
               placeholder="최대 6자"
-              className="mt-8 h-14 w-full rounded-2xl border border-input bg-card px-5 text-lg outline-none focus:border-primary"
+              className="mt-8 h-14 w-full rounded-lg border border-input bg-card px-5 text-lg outline-none focus:border-primary"
             />
             <p className="mt-2 text-right text-sm text-muted-foreground">{name.length}/{NAME_MAX}</p>
             <p className="mt-4 text-sm text-muted-foreground">추천 이름</p>
@@ -70,7 +72,7 @@ function Onboarding() {
             <h1 className="font-display text-3xl leading-snug">{name}의 말투를<br />골라 주세요</h1>
             <div className="mt-8 grid grid-cols-2 gap-3">
               {TONES.map((t) => (
-                <Chip key={t.id} selected={tone === t.id} onClick={() => setTone(t.id)} className="h-14 rounded-2xl text-base">
+                <Chip key={t.id} selected={tone === t.id} onClick={() => setTone(t.id)} className="h-14 rounded-lg text-base">
                   {t.label}
                 </Chip>
               ))}
@@ -83,17 +85,17 @@ function Onboarding() {
             <h1 className="font-display text-3xl leading-snug">배경색을<br />골라 주세요</h1>
             <div className="mt-8 grid grid-cols-2 gap-4">
               {BACKGROUNDS.map((b) => (
-                <button
+                <Button variant="ghost"
                   key={b.id}
                   onClick={() => setBg(b.id)}
                   aria-pressed={bg === b.id}
-                  className={cn("rounded-3xl border-2 p-2 transition", bg === b.id ? "border-primary" : "border-transparent")}
+                  className={cn("h-auto flex-col rounded-lg border-2 p-2 transition", bg === b.id ? "border-primary" : "border-transparent")}
                 >
-                  <div className={cn(b.id === "black" && "dark")}>
-                    <div className="h-36 rounded-2xl border border-border bg-background" />
+                  <div className={cn("w-full", b.id === "black" && "dark")}>
+                    <div className="h-36 rounded-lg border border-border bg-background" />
                   </div>
                   <p className="mt-2 font-semibold">{b.label}</p>
-                </button>
+                </Button>
               ))}
             </div>
           </>

@@ -7,7 +7,7 @@ import { IMAGE_MAX } from "@/lib/constants";
 /* Button */
 type Variant = "primary" | "secondary" | "ghost" | "outline" | "danger";
 const variants: Record<Variant, string> = {
-  primary: "bg-primary text-primary-foreground shadow-soft hover:brightness-105",
+  primary: "control-primary bg-primary text-primary-foreground hover:brightness-105",
   secondary: "bg-secondary text-secondary-foreground hover:brightness-95",
   ghost: "text-foreground hover:bg-muted",
   outline: "border border-border bg-card text-foreground hover:bg-muted",
@@ -23,7 +23,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none",
+        "inline-flex shrink-0 items-center justify-center gap-2 rounded-lg font-semibold transition active:scale-[0.97] disabled:opacity-40 disabled:pointer-events-none",
         variants[variant],
         sizes[size],
         className,
@@ -35,7 +35,7 @@ export function Button({
 
 /* Card */
 export function Card({ className, children }: { className?: string; children: ReactNode }) {
-  return <div className={cn("rounded-3xl bg-card p-5 text-card-foreground shadow-soft", className)}>{children}</div>;
+  return <div className={cn("rounded-lg border border-border bg-card p-5 text-card-foreground shadow-soft", className)}>{children}</div>;
 }
 
 /* Chip */
@@ -45,11 +45,11 @@ export function Chip({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { selected?: boolean }) {
   return (
-    <button
+    <Button variant="outline"
       type="button"
       aria-pressed={selected}
       className={cn(
-        "rounded-full border px-4 py-2 text-sm font-medium transition active:scale-95",
+        "h-auto rounded-lg border px-4 py-2 text-sm font-medium transition active:scale-95",
         selected
           ? "border-primary bg-accent text-accent-foreground"
           : "border-border bg-card text-foreground hover:bg-muted",
@@ -73,7 +73,7 @@ export function Header({
   right?: ReactNode;
 }) {
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between bg-background/90 px-4 backdrop-blur">
+    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card/90 px-5 backdrop-blur">
       <div className="w-11">
         {back && (
           <Link to="/" aria-label="뒤로" className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-muted">
@@ -112,7 +112,7 @@ export function Modal({
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-sm rounded-3xl bg-popover p-6 text-center text-popover-foreground shadow-soft animate-in zoom-in-95"
+        className="w-full max-w-sm rounded-lg border border-border bg-popover p-6 text-center text-popover-foreground shadow-soft animate-in zoom-in-95"
         onClick={(e) => e.stopPropagation()}
       >
         {title && <h2 className="mb-2 font-display text-xl">{title}</h2>}
@@ -141,7 +141,7 @@ export function BottomSheet({
       <div
         role="dialog"
         aria-modal="true"
-        className="w-full max-w-md rounded-t-3xl bg-popover p-6 pb-10 text-popover-foreground animate-in slide-in-from-bottom"
+        className="w-full max-w-xl rounded-t-lg bg-popover p-6 pb-10 text-popover-foreground animate-in slide-in-from-bottom"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted" />
@@ -175,7 +175,7 @@ export function ChatInput({
 }) {
   return (
     <form
-      className="flex items-end gap-2 rounded-3xl border border-border bg-card p-2 shadow-soft"
+      className="flex items-end gap-2 rounded-lg border border-border bg-card p-2"
       onSubmit={(e) => {
         e.preventDefault();
         onSend();

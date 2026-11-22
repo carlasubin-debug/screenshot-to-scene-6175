@@ -4,7 +4,7 @@ import { MessageCircleQuestion, Sparkles } from "lucide-react";
 import { Button, ChatInput, Header, ImageUploader, type LocalImage } from "@/components/common";
 import { AppMenu } from "@/components/AppShell";
 import { CharacterDisplay, useCharacterMotion } from "@/components/character";
-import { GREETINGS, wantsInterpret } from "@/lib/constants";
+import { wantsInterpret } from "@/lib/constants";
 import { getChatReply } from "@/lib/friend-service";
 import { CHAT_KEY, setDraftText } from "@/lib/interpret-session";
 import { useSettings } from "@/lib/settings-store";
@@ -18,13 +18,15 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "헷갈리는 말, 친구에게 물어보세요. 상황까지 같이 살펴보는 대화 해석 친구." },
       { property: "og:title", content: "뭐라는 거야? · 나의 AI 친구" },
       { property: "og:description", content: "헷갈리는 말, 친구에게 물어보세요." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,
 });
 
 function Home() {
-  const s = useSettings()!;
+  const s = useSettings();
   const navigate = useNavigate();
   const [menu, setMenu] = useState(false);
   const [text, setText] = useState("");
@@ -47,7 +49,7 @@ function Home() {
 
   const send = async () => {
     const t = text.trim();
-    if (!t) return;
+    if (!t || !s) return;
     const suggest = wantsInterpret(t);
     setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, imageCount: images.length, suggestInterpret: suggest }]);
     setText("");
@@ -64,14 +66,15 @@ function Home() {
     navigate({ to: "/interpret" });
   };
 
+  if (!s) return null;
+
   return (
-    <div className="flex flex-1 flex-col">
-      <Header onMenu={() => setMenu(true)} />
-      <div className="flex flex-1 flex-col overflow-y-auto px-5">
-        <CharacterDisplay motion={motion} className={cn("transition-all", msgs.length ? "h-44" : "h-72")} />
+    <div className="home-page flex flex-1 flex-col">
+      <Header title="일반 채팅" onMenu={() => setMenu(true)} />
+      <div className="page-content flex flex-1 flex-col px-5">
+        <CharacterDisplay motion={motion} className={cn(msgs.length ? "h-48" : "h-60")} />
         <div className="text-center">
           <p className="font-display text-2xl">{s.name}</p>
-          <p className="mt-2 inline-block rounded-3xl bg-card px-5 py-3 shadow-soft">{GREETINGS[s.tone]}</p>
         </div>
 
         <div className="mt-6 flex-1 space-y-3 pb-4">
@@ -79,7 +82,7 @@ function Home() {
             <div key={m.id} className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}>
               <div
                 className={cn(
-                  "max-w-[80%] whitespace-pre-wrap rounded-3xl px-4 py-2.5",
+                  "max-w-[80%] whitespace-pre-wrap break-words rounded-lg px-4 py-2.5",
                   m.role === "user" ? "rounded-br-md bg-primary text-primary-foreground" : "rounded-bl-md bg-card shadow-soft",
                 )}
               >
@@ -87,12 +90,12 @@ function Home() {
                 {!!m.imageCount && <span className="mt-1 block text-xs opacity-80">사진 {m.imageCount}장 첨부</span>}
               </div>
               {m.suggestInterpret && (
-                <button
+                <Button variant="secondary" size="sm"
                   onClick={() => goInterpret(m.text)}
                   className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground"
                 >
                   <Sparkles className="h-4 w-4" /> 해석 모드로 갈까요?
-                </button>
+                </Button>
               )}
             </div>
           ))}
@@ -101,7 +104,7 @@ function Home() {
         </div>
       </div>
 
-      <div className="sticky bottom-0 space-y-3 bg-background/95 px-4 pb-5 pt-3 backdrop-blur">
+      <div className="page-actions sticky space-y-3 border-t border-border bg-background/95 px-5 pb-4 pt-3 backdrop-blur">
         {images.length > 0 && <ImageUploader images={images} onChange={setImages} />}
         <div className="hidden"><ImageUploader images={images} onChange={setImages} openSignal={attachSignal} /></div>
         <div className="flex justify-end">
