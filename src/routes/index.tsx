@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
 import { MessageCircleQuestion, Sparkles } from "lucide-react";
 import { Button, ChatInput, Header, ImageUploader, type LocalImage } from "@/components/common";
 import { AppMenu } from "@/components/AppShell";
 import { CharacterDisplay, useCharacterMotion } from "@/components/character";
 import { wantsInterpret } from "@/lib/constants";
-import { getChatReply } from "@/lib/friend-service";
+import { getClovaReply } from "@/lib/clova.functions";
 import { CHAT_KEY, setDraftText } from "@/lib/interpret-session";
 import { useSettings } from "@/lib/settings-store";
 import type { ChatMessage } from "@/lib/types";
@@ -34,6 +35,11 @@ function Home() {
   const [images, setImages] = useState<LocalImage[]>([]);
   const [attachSignal, setAttachSignal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [retryText, setRetryText] = useState("");
+  const sendingRef = useRef(false);
+  const guestIdRef = useRef("");
+  const requestReply = useServerFn(getClovaReply);
   const endRef = useRef<HTMLDivElement>(null);
   const motion = useCharacterMotion(loading ? "loading" : text ? "typing" : "idle");
 
@@ -47,18 +53,43 @@ function Home() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs]);
 
+  const receiveReply = async (t: string) => {
+    sendingRef.current = true;
+    setLoading(true);
+    setError("");
+    setRetryText(t);
+    try {
+      if (!guestIdRef.current) {
+        const stored = sessionStorage.getItem("mwoi.clova.guest");
+        guestIdRef.current = stored || crypto.randomUUID();
+        sessionStorage.setItem("mwoi.clova.guest", guestIdRef.current);
+      }
+      const reply = await requestReply({ data: { text: t, userId: guestIdRef.current } });
+      if (!reply.ok) {
+        setError(reply.error);
+        return;
+      }
+      setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "friend", text: reply.text }]);
+      setRetryText("");
+    } catch {
+      setError("답변을 받지 못했어요. 연결을 확인하고 다시 시도해 주세요.");
+    } finally {
+      sendingRef.current = false;
+      setLoading(false);
+    }
+  };
+
   const send = async () => {
     const t = text.trim();
-    if (!t || !s) return;
+    if (!t || !s || sendingRef.current) return;
+    setError("");
+    setRetryText("");
     const suggest = wantsInterpret(t);
     setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, imageCount: images.length, suggestInterpret: suggest }]);
     setText("");
     setImages([]);
     if (suggest) return;
-    setLoading(true);
-    const reply = await getChatReply(s.tone, t);
-    setLoading(false);
-    setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "friend", text: reply }]);
+    await receiveReply(t);
   };
 
   const goInterpret = (draft?: string) => {
@@ -105,6 +136,10 @@ function Home() {
       </div>
 
       <div className="page-actions sticky space-y-3 border-t border-border bg-background/95 px-5 pb-4 pt-3 backdrop-blur">
+        {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-2 text-sm text-destructive">
+          <p>{error}</p>
+          <Button variant="outline" size="sm" disabled={loading} onClick={() => { if (retryText && !sendingRef.current) void receiveReply(retryText); }}>다시 시도</Button>
+        </div>}
         {images.length > 0 && <ImageUploader images={images} onChange={setImages} />}
         <div className="hidden"><ImageUploader images={images} onChange={setImages} openSignal={attachSignal} /></div>
         <div className="flex justify-end">

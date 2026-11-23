@@ -31,3 +31,5 @@ use the editor.
 
 - Keep the shared bottom navigation in AppShell and position page action bars above its safe-area-aware height so every screen shares one navigation boundary.
 - Use shared common controls and global semantic tokens for the app's presentation so page styling remains consistent across themes.
+- Normal chat calls the public CLOVA server function with a per-tab guest UUID; sign requests server-side using Web Crypto and the stored secret because CLOVA requires body-dependent HMAC, unsupported by static connector auth.
+- Keep structured interpretation separate from CLOVA scenario chat because the provider's text response does not supply the interpretation result schema.
