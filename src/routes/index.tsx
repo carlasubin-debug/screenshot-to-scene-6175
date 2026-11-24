@@ -1,13 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { MessageCircleQuestion, Sparkles } from "lucide-react";
 import { Button, ChatInput, Header, ImageUploader, type LocalImage } from "@/components/common";
 import { AppMenu } from "@/components/AppShell";
 import { CharacterDisplay, useCharacterMotion } from "@/components/character";
-import { wantsInterpret } from "@/lib/constants";
 import { getClovaReply } from "@/lib/clova.functions";
-import { CHAT_KEY, setDraftText } from "@/lib/interpret-session";
+import { CHAT_KEY } from "@/lib/interpret-session";
 import { useSettings } from "@/lib/settings-store";
 import type { ChatMessage } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -15,10 +13,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "뭐라는 거야? · 나의 AI 친구" },
-      { name: "description", content: "헷갈리는 말, 친구에게 물어보세요. 상황까지 같이 살펴보는 대화 해석 친구." },
-      { property: "og:title", content: "뭐라는 거야? · 나의 AI 친구" },
-      { property: "og:description", content: "헷갈리는 말, 친구에게 물어보세요." },
+      { title: "뭐라는 거야? · 내 반려동물과 대화" },
+      { name: "description", content: "내 반려동물에게 말을 걸고 속마음을 들어 보세요." },
+      { property: "og:title", content: "뭐라는 거야? · 내 반려동물과 대화" },
+      { property: "og:description", content: "내 반려동물에게 말을 걸고 속마음을 들어 보세요." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -84,24 +82,17 @@ function Home() {
     if (!t || !s || sendingRef.current) return;
     setError("");
     setRetryText("");
-    const suggest = wantsInterpret(t);
-    setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, imageCount: images.length, suggestInterpret: suggest }]);
+    setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, imageCount: images.length }]);
     setText("");
     setImages([]);
-    if (suggest) return;
     await receiveReply(t);
-  };
-
-  const goInterpret = (draft?: string) => {
-    if (draft) setDraftText(draft);
-    navigate({ to: "/interpret" });
   };
 
   if (!s) return null;
 
   return (
     <div className="home-page flex flex-1 flex-col">
-      <Header title="일반 채팅" onMenu={() => setMenu(true)} />
+      <Header title="대화하기" onMenu={() => setMenu(true)} />
       <div className="page-content flex flex-1 flex-col px-5">
         <CharacterDisplay motion={motion} className={cn(msgs.length ? "h-48" : "h-60")} />
         <div className="text-center">
@@ -120,14 +111,6 @@ function Home() {
                 {m.text}
                 {!!m.imageCount && <span className="mt-1 block text-xs opacity-80">사진 {m.imageCount}장 첨부</span>}
               </div>
-              {m.suggestInterpret && (
-                <Button variant="secondary" size="sm"
-                  onClick={() => goInterpret(m.text)}
-                  className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground"
-                >
-                  <Sparkles className="h-4 w-4" /> 해석 모드로 갈까요?
-                </Button>
-              )}
             </div>
           ))}
           {loading && <p className="text-sm text-muted-foreground">{s.name}이(가) 생각 중...</p>}
@@ -142,11 +125,6 @@ function Home() {
         </div>}
         {images.length > 0 && <ImageUploader images={images} onChange={setImages} />}
         <div className="hidden"><ImageUploader images={images} onChange={setImages} openSignal={attachSignal} /></div>
-        <div className="flex justify-end">
-          <Button variant="secondary" size="sm" onClick={() => goInterpret()}>
-            <MessageCircleQuestion className="h-4 w-4" /> 뭐라는 거야?
-          </Button>
-        </div>
         <ChatInput
           value={text}
           onChange={setText}

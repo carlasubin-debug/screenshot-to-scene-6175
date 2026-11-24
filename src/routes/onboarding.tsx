@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "친구 만들기 · 뭐라는 거야?" },
-      { name: "description", content: "이름과 말투를 정하고 나만의 AI 친구를 만나 보세요." },
-      { property: "og:title", content: "친구 만들기 · 뭐라는 거야?" },
-      { property: "og:description", content: "이름과 말투를 정하고 나만의 AI 친구를 만나 보세요." },
+      { title: "반려동물 등록 · 뭐라는 거야?" },
+      { name: "description", content: "이름과 성격을 정하고 내 반려동물과 대화해 보세요." },
+      { property: "og:title", content: "반려동물 등록 · 뭐라는 거야?" },
+      { property: "og:description", content: "이름과 성격을 정하고 내 반려동물과 대화해 보세요." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const STEPS = ["이름", "말투", "배경", "외형"];
+const STEPS = ["이름", "성격", "배경", "외형"];
 
 function Onboarding() {
   const s = useSettings();
@@ -48,7 +48,7 @@ function Onboarding() {
       <div className="flex-1">
         {step === 0 && (
           <>
-            <h1 className="font-display text-3xl leading-snug">친구의 이름을<br />지어 주세요</h1>
+            <h1 className="font-display text-3xl leading-snug">반려동물의 이름을<br />지어 주세요</h1>
             <input
               autoFocus
               value={name}
@@ -69,7 +69,7 @@ function Onboarding() {
 
         {step === 1 && (
           <>
-            <h1 className="font-display text-3xl leading-snug">{name}의 말투를<br />골라 주세요</h1>
+            <h1 className="font-display text-3xl leading-snug">{name}의 성격을<br />골라 주세요</h1>
             <div className="mt-8 grid grid-cols-2 gap-3">
               {TONES.map((t) => (
                 <Chip key={t.id} selected={tone === t.id} onClick={() => setTone(t.id)} className="h-14 rounded-lg text-base">

@@ -13,9 +13,9 @@ export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
       { title: "설정 · 뭐라는 거야?" },
-      { name: "description", content: "말투, 배경, 글자 크기 등 친구 설정을 바꿔요." },
+      { name: "description", content: "말투, 배경, 글자 크기 등 반려동물 설정을 바꿔요." },
       { property: "og:title", content: "설정 · 뭐라는 거야?" },
-      { property: "og:description", content: "말투, 배경, 글자 크기 등 친구 설정을 바꿔요." },
+      { property: "og:description", content: "말투, 배경, 글자 크기 등 반려동물 설정을 바꿔요." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -52,7 +52,7 @@ function SettingsPage() {
       <div className="page-content profile-content space-y-6 px-5 pb-10 pt-6">
         <div className="flex items-center gap-4 border-b border-border pb-6">
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-accent text-primary"><UserRound className="h-8 w-8" /></div>
-          <div><h1 className="text-xl font-semibold">{s.name}</h1><p className="mt-1 text-sm text-muted-foreground">나의 AI 친구</p></div>
+          <div><h1 className="text-xl font-semibold">{s.name}</h1><p className="mt-1 text-sm text-muted-foreground">내 반려동물</p></div>
         </div>
         <section className="border-b border-border pb-6">
           <h2 className="mb-2 font-semibold">화면</h2>

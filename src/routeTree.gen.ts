@@ -10,9 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as InterpretRouteImport } from './routes/interpret'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as ResultRouteImport } from './routes/result'
 import { Route as SettingsRouteImport } from './routes/settings'
 
 const IndexRoute = IndexRouteImport.update({
@@ -20,19 +18,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InterpretRoute = InterpretRouteImport.update({
-  id: '/interpret',
-  path: '/interpret',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResultRoute = ResultRouteImport.update({
-  id: '/result',
-  path: '/result',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -43,39 +31,31 @@ const SettingsRoute = SettingsRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/interpret': typeof InterpretRoute
   '/onboarding': typeof OnboardingRoute
-  '/result': typeof ResultRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/interpret': typeof InterpretRoute
   '/onboarding': typeof OnboardingRoute
-  '/result': typeof ResultRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/interpret': typeof InterpretRoute
   '/onboarding': typeof OnboardingRoute
-  '/result': typeof ResultRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/interpret' | '/onboarding' | '/result' | '/settings'
+  fullPaths: '/' | '/onboarding' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/interpret' | '/onboarding' | '/result' | '/settings'
-  id: '__root__' | '/' | '/interpret' | '/onboarding' | '/result' | '/settings'
+  to: '/' | '/onboarding' | '/settings'
+  id: '__root__' | '/' | '/onboarding' | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  InterpretRoute: typeof InterpretRoute
   OnboardingRoute: typeof OnboardingRoute
-  ResultRoute: typeof ResultRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -88,25 +68,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/interpret': {
-      id: '/interpret'
-      path: '/interpret'
-      fullPath: '/interpret'
-      preLoaderRoute: typeof InterpretRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/result': {
-      id: '/result'
-      path: '/result'
-      fullPath: '/result'
-      preLoaderRoute: typeof ResultRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -121,9 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  InterpretRoute: InterpretRoute,
   OnboardingRoute: OnboardingRoute,
-  ResultRoute: ResultRoute,
   SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport

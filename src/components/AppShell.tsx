@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { House, CircleHelp, UserRound, MessageCircleQuestion, Shirt, Settings as SettingsIcon } from "lucide-react";
+import { House, UserRound, Shirt, Settings as SettingsIcon } from "lucide-react";
 import { useSettings } from "@/lib/settings-store";
 import { cn } from "@/lib/utils";
 import { BottomSheet, Button, Loading, Modal } from "./common";
@@ -26,10 +26,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="app-frame flex min-h-dvh w-full flex-col bg-background text-foreground">
         {!s || (!s.onboarded && path !== "/onboarding") ? <Loading /> : children}
         <nav aria-label="하단 메뉴" className="bottom-navigation fixed inset-x-0 bottom-0 z-30 border-t border-border bg-card/95 backdrop-blur-xl">
-          <div className="mx-auto grid max-w-2xl grid-cols-3">
+          <div className="mx-auto grid max-w-2xl grid-cols-2">
             {[
               { to: "/", label: "홈", icon: House, active: path === "/" },
-              { to: "/interpret", label: "뭐라는 거야?", icon: CircleHelp, active: path === "/interpret" || path === "/result" },
               { to: "/settings", label: "프로필", icon: UserRound, active: path === "/settings" },
             ].map(({ to, label, icon: Icon, active }) => (
               <Link key={to} to={to} aria-label={label} title={label} aria-current={active ? "page" : undefined} className={cn("flex h-16 items-center justify-center transition-colors", active ? "text-primary" : "text-muted-foreground hover:text-foreground")}>
@@ -50,9 +49,6 @@ export function AppMenu({ open, onClose }: { open: boolean; onClose: () => void 
     <>
       <BottomSheet open={open} onClose={onClose} title="메뉴">
         <div className="space-y-3">
-          <Link className={cn(item, "bg-muted font-semibold")} to="/interpret" onClick={onClose}>
-            <MessageCircleQuestion className="h-5 w-5 text-primary" /> 뭐라는 거야?
-          </Link>
           <Button variant="secondary" className={item} onClick={() => { onClose(); setSoon(true); }}>
             <Shirt className="h-5 w-5 text-primary" /> 뭐 입을 거야?
           </Button>
@@ -62,7 +58,7 @@ export function AppMenu({ open, onClose }: { open: boolean; onClose: () => void 
         </div>
       </BottomSheet>
       <Modal open={soon} onClose={() => setSoon(false)} title="뭐 입을 거야?">
-        <p className="text-muted-foreground">캐릭터 꾸미기 기능을 준비하고 있어요.</p>
+        <p className="text-muted-foreground">반려동물 꾸미기 기능을 준비하고 있어요.</p>
       </Modal>
     </>
   );

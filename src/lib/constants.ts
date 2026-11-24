@@ -2,7 +2,7 @@ import type { Background, Relationship, Situation, Tone } from "./types";
 
 export const NAME_MAX = 6;
 export const IMAGE_MAX = 3;
-export const SUGGESTED_NAMES = ["몽이", "수수", "하루", "뭐지"];
+export const SUGGESTED_NAMES = ["몽이", "초코", "콩이", "보리"];
 
 export const TONES: { id: Tone; label: string }[] = [
   { id: "child", label: "어린이" },
