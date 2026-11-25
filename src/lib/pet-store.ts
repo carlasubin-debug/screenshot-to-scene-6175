@@ -19,7 +19,7 @@ function read(): PetState {
   if (cache) return cache;
   try { const raw = localStorage.getItem(KEY); cache = raw ? { ...DEFAULT_PET, ...JSON.parse(raw) } : DEFAULT_PET; }
   catch { cache = DEFAULT_PET; }
-  return cache!;
+  return cache ?? DEFAULT_PET;
 }
 export function updatePet(patch: Partial<PetState> | ((p: PetState) => Partial<PetState>)) {
   const cur = read();
@@ -48,12 +48,14 @@ export function levelOf(points: number) {
   let i = 0;
   LEVELS.forEach((l, idx) => { if (points >= l.min) i = idx; });
   const next = LEVELS[i + 1];
-  return { index: i, label: LEVELS[i]!.label, next: next?.min ?? null };
+  return { index: i, label: (LEVELS[i] ?? LEVELS[0])?.label ?? "어색한 사이", next: next?.min ?? null };
 }
 /** Stable daily pick so letters and fortunes change once per day. */
 export function dailyPick<T>(list: readonly T[], date: string, salt = 0): T {
   let h = salt;
   for (const c of date) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return list[h % list.length]!;
+  const item = list[h % list.length];
+  if (item === undefined) throw new Error("Daily content must not be empty");
+  return item;
 }
 export const today = () => new Date().toLocaleDateString("sv-SE");

@@ -21,6 +21,7 @@ export interface ChatMessage {
   id: string;
   role: "user" | "friend";
   text: string;
+  createdAt?: string;
   imageCount?: number;
   suggestInterpret?: boolean;
 }

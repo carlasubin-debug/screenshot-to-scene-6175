@@ -56,12 +56,12 @@ export const ROUTINES = [
   { id: "day", label: "낮", from: 11, says: "창밖 구경 중이야. 새가 지나갔어!" },
   { id: "evening", label: "저녁", from: 17, says: "이제 올 시간이지? 현관 앞에서 기다리는 중!" },
   { id: "night", label: "밤", from: 21, says: "오늘도 고마웠어. 네 옆에서 잘래." },
-];
+ ] as const;
 export function routineNow(hour = new Date().getHours()) {
-  if (hour >= 21 || hour < 5) return ROUTINES[3]!;
-  if (hour >= 17) return ROUTINES[2]!;
-  if (hour >= 11) return ROUTINES[1]!;
-  return ROUTINES[0]!;
+  if (hour >= 21 || hour < 5) return ROUTINES[3];
+  if (hour >= 17) return ROUTINES[2];
+  if (hour >= 11) return ROUTINES[1];
+  return ROUTINES[0];
 }
 
 export const OUTFITS = [

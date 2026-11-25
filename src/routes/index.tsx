@@ -1,9 +1,12 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { Button, ChatInput, Header, ImageUploader, type LocalImage } from "@/components/common";
+import { Button, Chip, ChatInput, Header, ImageUploader, type LocalImage } from "@/components/common";
 import { AppMenu } from "@/components/AppShell";
-import { CharacterDisplay, useCharacterMotion } from "@/components/character";
+import { PetPortrait } from "@/components/PetPortrait";
+import { MOODS, SUGGESTED_QUESTIONS } from "@/lib/pet-data";
+import { usePet, updatePet, reward, levelOf } from "@/lib/pet-store";
+import { petSimulation } from "@/lib/pet-chat";
 import { getClovaReply } from "@/lib/clova.functions";
 import { CHAT_KEY } from "@/lib/interpret-session";
 import { useSettings } from "@/lib/settings-store";
@@ -26,7 +29,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const s = useSettings();
-  const navigate = useNavigate();
+  const pet = usePet();
+  const [restored, setRestored] = useState(false);
   const [menu, setMenu] = useState(false);
   const [text, setText] = useState("");
   const [msgs, setMsgs] = useState<ChatMessage[]>([]);
@@ -39,17 +43,18 @@ function Home() {
   const guestIdRef = useRef("");
   const requestReply = useServerFn(getClovaReply);
   const endRef = useRef<HTMLDivElement>(null);
-  const motion = useCharacterMotion(loading ? "loading" : text ? "typing" : "idle");
 
   useEffect(() => {
     try {
       setMsgs(JSON.parse(localStorage.getItem(CHAT_KEY) ?? "[]"));
     } catch {}
+    setRestored(true);
   }, []);
   useEffect(() => {
+    if (!restored) return;
     localStorage.setItem(CHAT_KEY, JSON.stringify(msgs));
     endRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [msgs]);
+  }, [msgs, restored]);
 
   const receiveReply = async (t: string) => {
     sendingRef.current = true;
@@ -57,17 +62,25 @@ function Home() {
     setError("");
     setRetryText(t);
     try {
+      if (!pet || !s) return;
+      const simulation = petSimulation(t, pet, s.name);
+      if (simulation) {
+        setMsgs(m => [...m, { id: crypto.randomUUID(), role: "friend", text: simulation, createdAt: new Date().toISOString() }]);
+        reward(1, "chat"); setRetryText(""); return;
+      }
       if (!guestIdRef.current) {
         const stored = sessionStorage.getItem("mwoi.clova.guest");
         guestIdRef.current = stored || crypto.randomUUID();
         sessionStorage.setItem("mwoi.clova.guest", guestIdRef.current);
       }
-      const reply = await requestReply({ data: { text: t, userId: guestIdRef.current } });
+      const context = `반려동물 대화 시뮬레이션. 이름: ${s.name}, 나이: ${pet.age}, 견종: ${pet.breed}, 성격: ${pet.personality}, 좋아하는 것: ${pet.likes}, 싫어하는 것: ${pet.dislikes}, 현재 기분: ${pet.mood}. 주인에게 반려동물 입장에서 답해 주세요. 질문: ${t}`;
+      const reply = await requestReply({ data: { text: context.slice(0, 4000), userId: guestIdRef.current } });
       if (!reply.ok) {
         setError(reply.error);
         return;
       }
-      setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "friend", text: reply.text }]);
+      setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "friend", text: reply.text, createdAt: new Date().toISOString() }]);
+      reward(1, "chat");
       setRetryText("");
     } catch {
       setError("답변을 받지 못했어요. 연결을 확인하고 다시 시도해 주세요.");
@@ -77,26 +90,30 @@ function Home() {
     }
   };
 
-  const send = async () => {
-    const t = text.trim();
+  const send = async (question?: string) => {
+    const t = (question ?? text).trim();
     if (!t || !s || sendingRef.current) return;
     setError("");
     setRetryText("");
-    setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, imageCount: images.length }]);
+    setMsgs((m) => [...m, { id: crypto.randomUUID(), role: "user", text: t, createdAt: new Date().toISOString(), imageCount: images.length }]);
     setText("");
     setImages([]);
     await receiveReply(t);
   };
 
-  if (!s) return null;
+  if (!s || !pet) return null;
 
   return (
     <div className="home-page flex flex-1 flex-col">
       <Header title="대화하기" onMenu={() => setMenu(true)} />
       <div className="page-content flex flex-1 flex-col px-5">
-        <CharacterDisplay motion={motion} className={cn(msgs.length ? "h-48" : "h-60")} />
+        <div className="pt-5"><PetPortrait /></div>
         <div className="text-center">
           <p className="font-display text-2xl">{s.name}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{levelOf(pet.intimacy).label} · 친밀도 {pet.intimacy}</p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">{MOODS.map(m => <Chip key={m.id} selected={pet.mood === m.id} onClick={() => updatePet({ mood: m.id })}>{m.face} {m.label}</Chip>)}</div>
+          <p className="mt-3 text-sm text-muted-foreground">{MOODS.find(m => m.id === pet.mood)?.line}</p>
+          <p className="mt-2 text-xs text-muted-foreground">반려동물의 속마음을 상상하는 대화예요.</p>
         </div>
 
         <div className="mt-6 flex-1 space-y-3 pb-4">
@@ -125,10 +142,11 @@ function Home() {
         </div>}
         {images.length > 0 && <ImageUploader images={images} onChange={setImages} />}
         <div className="hidden"><ImageUploader images={images} onChange={setImages} openSignal={attachSignal} /></div>
+        <div className="flex flex-wrap gap-2">{SUGGESTED_QUESTIONS.map(q => <Chip key={q} disabled={loading} onClick={() => void send(q)}>{q}</Chip>)}</div>
         <ChatInput
           value={text}
           onChange={setText}
-          onSend={send}
+          onSend={() => void send()}
           onAttach={() => setAttachSignal((n) => n + 1)}
           placeholder={`${s.name}에게 말 걸기`}
           disabled={loading}

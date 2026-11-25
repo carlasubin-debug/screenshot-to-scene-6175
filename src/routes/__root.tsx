@@ -66,7 +66,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "뭐라는 거야?" },
-      { name: "description", content: "헷갈리는 말을 같이 살펴보는 AI 친구" },
+      { name: "description", content: "내 반려동물과 속마음을 나누는 대화" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
