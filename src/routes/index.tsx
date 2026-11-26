@@ -73,8 +73,8 @@ function Home() {
         guestIdRef.current = stored || crypto.randomUUID();
         sessionStorage.setItem("mwoi.clova.guest", guestIdRef.current);
       }
-      const context = `반려동물 대화 시뮬레이션. 이름: ${s.name}, 나이: ${pet.age}, 견종: ${pet.breed}, 성격: ${pet.personality}, 좋아하는 것: ${pet.likes}, 싫어하는 것: ${pet.dislikes}, 현재 기분: ${pet.mood}. 주인에게 반려동물 입장에서 답해 주세요. 질문: ${t}`;
-      const reply = await requestReply({ data: { text: context.slice(0, 4000), userId: guestIdRef.current } });
+      // CLOVA is scenario-based and rejects long prompts, so send only the user's words.
+      const reply = await requestReply({ data: { text: t.slice(0, 4000), userId: guestIdRef.current } });
       if (!reply.ok) {
         setError(reply.error);
         return;

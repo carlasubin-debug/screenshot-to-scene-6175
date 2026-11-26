@@ -7,7 +7,7 @@
 - [x] Connect Cloud and securely collect the CLOVA signing key.
 - [x] Replace normal chat mock replies with signed CLOVA requests and recoverable errors.
 - [x] Verify signed provider requests and desktop/mobile error/retry flow; preserve interpretation and appearance (6 tests passed).
-- [ ] Verify a successful conversational answer — blocked by CLOVA returning its own system-error reply; builder learning/deployment settings need checking.
+- [x] Verify a successful conversational answer (send only the user question; CLOVA rejects long prompts).
 # Pet app pivot
 - [x] Remove human-message interpretation; pet wording.
 - [ ] Chat with mood + suggested questions (1,3,4)
