@@ -1,3 +1,8 @@
+# Current screen improvements
+- [x] Hide scrollbars without disabling scrolling.
+- [x] Improve profile editing with an accessible, scrollable form and persistent save/cancel controls.
+- [x] Verify profile save/cancel on mobile and desktop and a real CLOVA response on mobile (provider returned its fallback answer).
+
 # UI redesign
 - [x] Apply consistent soft-blue design and static character presentation.
 - [x] Add shared bottom navigation and expand page layouts without changing chat logic.

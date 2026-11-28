@@ -35,3 +35,4 @@ use the editor.
 - Keep curated pet simulations and behavior/sound possibilities in browser-safe data modules; open-ended chat continues through CLOVA because the provider is scenario-based.
 - Store pet profiles, intimacy, collections and diaries in one hydrated browser store; no account sync is implied.
 - Use separate content routes for activities and records so navigation resolves to real pages.
+- Keep profile edits in a Radix dialog with local draft fields and fixed save/cancel controls; this preserves keyboard access and prevents unsaved changes from reaching the browser stores.
